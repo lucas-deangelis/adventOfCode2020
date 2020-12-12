@@ -1,3 +1,4 @@
+console.time("Start up");
 const input = require("fs")
   .readFileSync("input.txt", "utf-8")
   .split("\n")
@@ -43,3 +44,4 @@ const part1 = weakness1(input, 25);
 console.log("Part 1: " + part1);
 const part2 = weakness2(input, part1);
 console.log("Part 2: " + part2);
+console.timeEnd("Start up");
