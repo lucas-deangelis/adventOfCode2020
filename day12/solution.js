@@ -44,23 +44,60 @@ function move(currentPosition, orientation, value) {
   return position;
 }
 
+function orientationToNum(orientation) {
+  switch (orientation) {
+    case "N":
+      return 0;
+    case "E":
+      return 1;
+    case "S":
+      return 2;
+    case "W":
+      return 3;
+  }
+}
+
+function numToOrientation(num) {
+  switch (num) {
+    case 0:
+      return "N";
+    case 1:
+      return "E";
+    case 2:
+      return "S";
+    case 3:
+      return "W";
+  }
+}
+
+function modulo(a, n) {
+  return ((a % n) + n) % n;
+}
+
+function newOrientation(oldOrientation, moveDirection, degrees) {
+  let num = 0;
+  if (moveDirection == "R") {
+    num = modulo(orientationToNum(oldOrientation) + degrees / 90, 4);
+  } else if (moveDirection == "L") {
+    num = modulo(orientationToNum(oldOrientation) - degrees / 90, 4);
+  }
+  return numToOrientation(num);
+}
+
+console.log(newOrientation("N", "R", 0));
+console.log(newOrientation("N", "R", 90));
+console.log(newOrientation("N", "R", 180));
+console.log(newOrientation("N", "R", 270));
+console.log(newOrientation("N", "L", 0));
+console.log(newOrientation("N", "L", 90));
+console.log(newOrientation("N", "L", 180));
+console.log(newOrientation("N", "L", 270));
+
 function moveShip(actions) {
   let position = { north: 0, east: 0 };
   let orientation = "E";
 
-  let oriToNum = new Map();
-  oriToNum.set("N", 0);
-  oriToNum.set("E", 1);
-  oriToNum.set("S", 2);
-  oriToNum.set("W", 3);
-  let numToOri = new Map();
-  numToOri.set(0, "N");
-  numToOri.set(1, "E");
-  numToOri.set(2, "S");
-  numToOri.set(3, "W");
-
   for (const action of actions) {
-    console.log(action);
     switch (action.action) {
       case "F":
         position = move(position, orientation, action.value);
@@ -72,19 +109,11 @@ function moveShip(actions) {
         position = move(position, action.action, action.value);
         break;
       case "L":
-        let move = action.value / 90;
-        orientation = numToOri.get((oriToNum.get(orientation) - move + 4) % 4);
-        break;
       case "R":
-        let move1 = action.value / 90;
-        console.log(move1);
-
-        orientation = numToOri.get((oriToNum.get(orientation) + move1) % 4);
+        orientation = newOrientation(orientation, action.action, action.value);
         break;
     }
-    console.log(orientation);
   }
-  console.log(position);
 
   return Math.abs(position.north) + Math.abs(position.east);
 }
